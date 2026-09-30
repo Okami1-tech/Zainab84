@@ -1,0 +1,336 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#090711">
+<title>The Threads of You | Hayati</title>
+<style>
+*{box-sizing:border-box}
+:root{
+  --bg:#090711;--pink:#ff9dce;--purple:#b99aff;
+  --white:#f8efff;--muted:#a99bb6;
+}
+body{
+  margin:0;min-height:100vh;color:var(--white);
+  background:radial-gradient(ellipse at 50% 35%,#211331 0%,#100b1a 48%,#090711 100%);
+  font-family:Georgia,"Times New Roman",serif;
+}
+button{font:inherit;color:inherit;cursor:pointer}
+button:focus-visible{outline:2px solid var(--pink);outline-offset:4px}
+main{max-width:720px;margin:auto;padding:24px 20px 65px}
+header{display:flex;justify-content:space-between;align-items:center;
+  font:9px Arial;letter-spacing:3px;color:#a99bb7}
+#clock{font-size:12px;letter-spacing:1px;color:#f4eaff}
+.hero{text-align:center;margin:8vh auto 0}
+.kicker{font:9px Arial;letter-spacing:5px;color:var(--pink)}
+h1{font-size:clamp(43px,10vw,76px);font-weight:normal;line-height:.96;
+  letter-spacing:-2px;margin:22px 0}
+h1 em{font-weight:normal;color:var(--pink)}
+.intro{max-width:440px;margin:20px auto;color:#d1c4db;
+  font-size:16px;line-height:1.9}
+.hint{font:9px Arial;letter-spacing:3px;color:#92849f;margin-top:30px}
+.loom{position:relative;max-width:570px;margin:35px auto 0;
+  padding:10px 0 20px}
+.weave{
+  position:relative;width:min(100%,410px);height:300px;margin:auto;
+  display:flex;align-items:center;justify-content:center;
+}
+.glow{
+  position:absolute;width:220px;height:220px;border-radius:50%;
+  background:#a66aff;filter:blur(85px);opacity:.12;
+  transition:opacity 1s,transform 1s;
+}
+.weave.complete .glow{opacity:.34;transform:scale(1.35)}
+svg{position:absolute;width:100%;height:100%;inset:0;overflow:visible}
+.heart-base{fill:none;stroke:rgba(255,255,255,.08);stroke-width:1.1}
+.heart-progress{
+  fill:none;stroke:url(#heartGradient);stroke-width:2.5;
+  stroke-linecap:round;stroke-dasharray:1000;stroke-dashoffset:1000;
+  filter:drop-shadow(0 0 7px rgba(255,154,208,.65));
+  transition:stroke-dashoffset 1.4s cubic-bezier(.2,.8,.2,1);
+}
+.thread{
+  fill:none;stroke-width:1.2;stroke-linecap:round;
+  opacity:0;stroke-dasharray:5 8;
+  transition:opacity .7s,stroke-dasharray 1s;
+}
+.thread.visible{opacity:.85;animation:threadIn 1.1s ease both}
+@keyframes threadIn{from{stroke-dasharray:1 20;opacity:0}to{stroke-dasharray:5 8;opacity:.85}}
+.center{
+  position:relative;z-index:2;text-align:center;pointer-events:none;
+  width:190px;transition:transform .5s;
+}
+.center .symbol{font-size:36px;color:#f9b9e0;
+  text-shadow:0 0 25px #e58ed5;display:block;margin-bottom:12px}
+.center small{font:8px Arial;letter-spacing:3px;color:#c5b2d7}
+.center p{font-size:15px;line-height:1.7;color:#e8dcec;margin:10px 0 0}
+.weave.pulse .center{animation:pulse .7s ease}
+@keyframes pulse{50%{transform:scale(1.08)}}
+.threads{
+  display:grid;grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:12px;max-width:500px;margin:0 auto;
+}
+.threadBtn{
+  border:1px solid rgba(218,183,255,.17);
+  background:linear-gradient(140deg,rgba(38,26,51,.72),rgba(18,13,28,.75));
+  border-radius:16px;padding:16px 12px;text-align:left;
+  display:flex;align-items:center;gap:11px;min-height:66px;
+  transition:background .4s,border-color .4s,transform .3s;
+  -webkit-tap-highlight-color:transparent;
+}
+.threadBtn:active{transform:scale(.97)}
+.threadBtn.active{
+  border-color:rgba(255,157,206,.65);
+  background:linear-gradient(140deg,rgba(91,48,92,.5),rgba(36,23,54,.85));
+}
+.threadBtn .strand{
+  width:23px;height:3px;border-radius:5px;flex-shrink:0;
+  background:var(--c);box-shadow:0 0 10px var(--c);
+}
+.threadBtn .label{font:9px Arial;letter-spacing:1.3px;color:#d9cce4;line-height:1.5}
+.threadBtn.active .label{color:#fff}
+.counter{text-align:center;font:9px Arial;letter-spacing:2px;color:#8f829c;margin:20px auto 0}
+.message{
+  margin:30px auto 0;max-width:520px;min-height:240px;
+  padding:30px 25px;text-align:center;
+  border:1px solid rgba(222,185,255,.14);border-radius:24px;
+  background:linear-gradient(145deg,rgba(33,23,46,.88),rgba(14,10,22,.9));
+  box-shadow:0 20px 65px rgba(0,0,0,.2);
+  position:relative;overflow:hidden;
+}
+.message:before{content:"";position:absolute;inset:7px;
+  border:1px solid rgba(255,255,255,.035);border-radius:17px;pointer-events:none}
+.message small{font:9px Arial;letter-spacing:4px;color:var(--pink)}
+.message h2{font-weight:normal;font-size:29px;line-height:1.2;margin:16px 0}
+.message p{font-size:16px;line-height:1.9;color:#d7cbdc;
+  white-space:pre-line;margin:0}
+.message.animate{animation:reveal .6s ease both}
+@keyframes reveal{from{opacity:.2;transform:translateY(9px)}to{opacity:1;transform:translateY(0)}}
+.closing{
+  margin:55px auto 0;text-align:center;max-width:500px;padding:10px 8px;
+}
+.closing .ornament{font-size:26px;color:var(--pink);
+  text-shadow:0 0 20px #e58ed5}
+.closing h2{font-weight:normal;font-size:clamp(29px,7vw,42px);
+  line-height:1.3;margin:20px 0}
+.closing p{font-size:16px;line-height:1.9;color:#cfc1d9}
+.signature{font-size:22px;color:var(--pink);font-style:italic;margin-top:25px}
+footer{text-align:center;margin-top:55px;font:8px Arial;letter-spacing:3px;color:#756981}
+@media(max-width:370px){
+  main{padding-left:14px;padding-right:14px}
+  .threadBtn{padding:13px 9px;gap:8px}
+  .threadBtn .label{font-size:8px;letter-spacing:1px}
+  .weave{height:265px}
+}
+@media(prefers-reduced-motion:reduce){
+  *,*:before,*:after{animation:none!important;transition:none!important}
+}
+</style>
+</head>
+<body>
+<main>
+<header>
+  <span>A LITTLE WORLD FOR HAYATI</span>
+  <span id="clock">--:--</span>
+</header>
+
+<section class="hero">
+  <div class="kicker">A keepsake made of feelings</div>
+  <h1>THE THREADS<br>OF <em>YOU</em></h1>
+  <p class="intro">
+    My Hayati, if all the things I feel for you
+    were threads, I think they would weave
+    something beautiful.
+  </p>
+  <div class="hint">CHOOSE A THREAD · WATCH US TAKE SHAPE</div>
+</section>
+
+<section class="loom">
+  <div class="weave" id="weave">
+    <div class="glow"></div>
+    <svg viewBox="0 0 400 300" role="img" aria-label="A heart gradually woven from threads">
+      <defs>
+        <linearGradient id="heartGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stop-color="#ff9dce"/>
+          <stop offset="55%" stop-color="#c6a0ff"/>
+          <stop offset="100%" stop-color="#ffb9dc"/>
+        </linearGradient>
+      </defs>
+      <path class="heart-base" d="M200 252 C168 224 69 159 69 101 C69 43 145 32 200 91 C255 32 331 43 331 101 C331 159 232 224 200 252Z"/>
+      <path class="heart-progress" id="heartProgress"
+        d="M200 252 C168 224 69 159 69 101 C69 43 145 32 200 91 C255 32 331 43 331 101 C331 159 232 224 200 252Z"/>
+      <path class="thread" data-line="care" stroke="#ff9dce"
+        d="M82 110 C125 65 165 75 200 150 S280 225 318 104"/>
+      <path class="thread" data-line="joy" stroke="#c6a0ff"
+        d="M92 153 C145 180 164 45 210 83 S260 206 310 148"/>
+      <path class="thread" data-line="growth" stroke="#f6b5df"
+        d="M108 78 C155 133 247 133 292 78 M112 183 C165 125 236 125 288 183"/>
+      <path class="thread" data-line="days" stroke="#b79bff"
+        d="M120 55 C105 126 157 205 200 232 C243 205 295 126 280 55"/>
+      <path class="thread" data-line="home" stroke="#ffb4d7"
+        d="M70 120 C125 117 145 210 200 210 S275 117 330 120"/>
+      <path class="thread" data-line="prayer" stroke="#d5b5ff"
+        d="M145 49 C174 100 226 100 255 49 M145 190 C174 145 226 145 255 190"/>
+    </svg>
+    <div class="center">
+      <span class="symbol">♡</span>
+      <small id="centerLabel">A HEART IN THE MAKING</small>
+      <p id="centerText">Every thread holds a little piece of what you mean to me.</p>
+    </div>
+  </div>
+
+  <div class="threads">
+    <button class="threadBtn" data-thread="care" style="--c:#ff9dce">
+      <i class="strand"></i><span class="label">THE WAY YOU CARE</span>
+    </button>
+    <button class="threadBtn" data-thread="joy" style="--c:#c6a0ff">
+      <i class="strand"></i><span class="label">THE JOY YOU BRING</span>
+    </button>
+    <button class="threadBtn" data-thread="growth" style="--c:#f6b5df">
+      <i class="strand"></i><span class="label">WHO I'M BECOMING</span>
+    </button>
+    <button class="threadBtn" data-thread="days" style="--c:#b79bff">
+      <i class="strand"></i><span class="label">THE LITTLE DAYS</span>
+    </button>
+    <button class="threadBtn" data-thread="home" style="--c:#ffb4d7">
+      <i class="strand"></i><span class="label">THE HOME I HOPE FOR</span>
+    </button>
+    <button class="threadBtn" data-thread="prayer" style="--c:#d5b5ff">
+      <i class="strand"></i><span class="label">THE PRAYER I MAKE</span>
+    </button>
+  </div>
+  <div class="counter" id="counter">0 OF 6 THREADS WOVEN</div>
+</section>
+
+<section class="message" id="message" aria-live="polite">
+  <small id="tag">A LITTLE PIECE OF MY HEART</small>
+  <h2 id="title">For my Hayati.</h2>
+  <p id="words">There are things you do so naturally that you may never know how deeply they touch me.
+
+Choose a thread above, my love. This little world is for you.</p>
+</section>
+
+<section class="closing">
+  <div class="ornament">✧ ♡ ✧</div>
+  <h2>Not a perfect story.<br>A love we nurture.</h2>
+  <p>
+    Muhammad is still growing, Hayati. Still learning
+    how to be patient, how to be responsible, and
+    how to love through actions as much as words.
+
+    I don't know every page life has ahead of us.
+    But I pray Allah guides us toward what is good.
+    And if He has written Nikkah for us, may our
+    home be filled with mercy, understanding,
+    laughter, and barakah.
+
+    Thank you for the tenderness you already
+    bring into my life. I hope you always feel
+    cherished, respected, and cared for too.
+  </p>
+  <div class="signature">Yours with love, Muhammad 💜</div>
+</section>
+
+<footer>EVERY THREAD, A THOUGHT OF YOU · HAYATI</footer>
+</main>
+
+<script>
+const pieces={
+ care:{
+  tag:"THE WAY YOU CARE",
+  title:"You love in the little details.",
+  text:"You ask if I've eaten. You remind me to sleep. You check whether I'm okay, even when you have your own worries and responsibilities.\n\nI wonder if you realise how much those little things mean to me. You make me feel remembered in the middle of ordinary days, and I never want to take that for granted."
+ },
+ joy:{
+  tag:"THE JOY YOU BRING",
+  title:"You make room for softness.",
+  text:"There are conversations with you that stay with me long after they end. Little jokes, unexpected laughter, the way we share our thoughts and make each other smile.\n\nYou don't have to do something extraordinary to make a moment special. Sometimes, just being you is enough to make my day feel lighter."
+ },
+ growth:{
+  tag:"WHO I'M BECOMING",
+  title:"Your love reminds me to grow.",
+  text:"I have dreams I'm working towards, lessons I'm still learning, and parts of myself that still need patience and discipline.\n\nI want to become a man whose actions speak with sincerity. Someone who listens, takes responsibility, protects your peace, and keeps showing up.\n\nNot someone perfect, Hayati. Someone who never stops trying to do better."
+ },
+ days:{
+  tag:"THE LITTLE DAYS",
+  title:"I dream of the quiet moments.",
+  text:"I imagine us sharing food, talking about our days, laughing at the smallest things, and sometimes sitting together without needing to say much.\n\nI think there is a special kind of beauty in being comfortable with someone in the most ordinary moments.\n\nIf life gives us those days, I hope we remember how precious they are."
+ },
+ home:{
+  tag:"THE HOME I HOPE FOR",
+  title:"Somewhere we both feel safe.",
+  text:"When I imagine a home with you, I don't first think of its size or what we might own.\n\nI think of kindness after a tiring day. Honest conversations. Shared responsibilities. Forgiveness when we make mistakes. A place where both our dreams have room to breathe.\n\nIf Allah writes that chapter for us, I hope we build it with patience, respect, and mercy."
+ },
+ prayer:{
+  tag:"THE PRAYER I MAKE",
+  title:"Ya Allah, be gentle with her.",
+  text:"Ya Allah, ease what is difficult for her. Give her strength when she feels tired, peace when her heart is restless, and reasons to smile even on the days that feel heavy.\n\nGuide her steps, protect her, and grant her what is truly good for her.\n\nAnd if You have written a future for us together, guide us to it in a way that pleases You, and place mercy and barakah in it. Ameen."
+ }
+};
+
+const buttons=document.querySelectorAll(".threadBtn");
+const lines=document.querySelectorAll("[data-line]");
+const message=document.getElementById("message");
+const tag=document.getElementById("tag");
+const title=document.getElementById("title");
+const words=document.getElementById("words");
+const counter=document.getElementById("counter");
+const progress=document.getElementById("heartProgress");
+const weave=document.getElementById("weave");
+const centerLabel=document.getElementById("centerLabel");
+const centerText=document.getElementById("centerText");
+const opened=new Set();
+
+function selectThread(key,button){
+  const item=pieces[key];
+  if(!item)return;
+
+  opened.add(key);
+  button.classList.add("active");
+
+  const line=document.querySelector('[data-line="'+key+'"]');
+  if(line)line.classList.add("visible");
+
+  const count=opened.size;
+  progress.style.strokeDashoffset=1000-(count/6*1000);
+  counter.textContent=count+" OF 6 THREADS WOVEN";
+  centerLabel.textContent=count===6?"A HEART FULL OF MEANING":"THREAD "+count+" OF 6";
+  centerText.textContent=count===6
+    ?"Every thread carries a piece of my love for you."
+    :"One more little piece of us, woven with care.";
+
+  weave.classList.remove("pulse");
+  void weave.offsetWidth;
+  weave.classList.add("pulse");
+
+  message.classList.remove("animate");
+  void message.offsetWidth;
+  tag.textContent=item.tag;
+  title.textContent=item.title;
+  words.textContent=item.text;
+  message.classList.add("animate");
+
+  if(window.innerWidth<600){
+    message.scrollIntoView({behavior:"smooth",block:"nearest"});
+  }
+}
+
+buttons.forEach(button=>{
+  button.addEventListener("click",()=>{
+    selectThread(button.dataset.thread,button);
+  });
+});
+
+function updateClock(){
+  document.getElementById("clock").textContent=
+    new Date().toLocaleTimeString([],{
+      hour:"2-digit",minute:"2-digit"
+    });
+}
+updateClock();
+setInterval(updateClock,30000);
+</script>
+</body>
+</html>
